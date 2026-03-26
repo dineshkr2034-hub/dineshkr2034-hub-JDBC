@@ -1,12 +1,13 @@
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.h2.result.ResultTarget;
 
 import util.ConnectionUtil;
 
@@ -36,15 +37,39 @@ import util.ConnectionUtil;
  */
 public class Lab {
 
-    public void createSong(Song song)  {
+    public void createSong(Song song) throws SQLException  {
+     try{
+        Connection con=ConnectionUtil.getConnection();
+        String sql="insert into songs(id,title,artist) values ('"+song.getId()+"','"+song.gettitle()+"','"+song.getArtist()+"');";
+
+        Statement st=con.createStatement();
+
+        st.executeUpdate(sql);
+    }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
         //write jdbc code here
     }
 
-    public List<Song> getAllSongs(){
+    public List<Song> getAllSongs() throws SQLException{
         List<Song> songs = new ArrayList<>();
+        try{
+        Connection con=ConnectionUtil.getConnection();
+        String sql="select * from songs;";
 
+        Statement st=con.createStatement();
+
+        ResultSet rs=st.executeQuery(sql);
+
+        while(rs.next()){
+            songs.add(new Song(rs.getInt(1),rs.getString(2),rs.getString(3)));
+        }
         //write jdbc code here
-
+       }
+       catch (SQLException e) {
+            e.printStackTrace();
+        }
         return songs;
     }
 }
